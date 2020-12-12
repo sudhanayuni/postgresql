@@ -1,0 +1,168 @@
+psql (13.1)
+WARNING: Console code page (437) differs from Windows code page (1252)         8-bit characters might not work correctly. See psql reference         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# \l
+                                         List of databases
+   Name    |  Owner   | Encoding |      Collate       |       Ctype        |   Access privileges
+-----------+----------+----------+--------------------+--------------------+-----------------------
+ postgres  | postgres | UTF8     | English_India.1252 | English_India.1252 |
+ template0 | postgres | UTF8     | English_India.1252 | English_India.1252 | =c/postgres          +
+           |          |          |                    |                    | postgres=CTc/postgres
+ template1 | postgres | UTF8     | English_India.1252 | English_India.1252 | =c/postgres          +
+           |          |          |                    |                    | postgres=CTc/postgres
+ test      | postgres | UTF8     | English_India.1252 | English_India.1252 |
+(4 rows)
+
+
+postgres=# DROP DATABASE test;
+DROP DATABASE
+postgres=# \l
+                                         List of databases
+   Name    |  Owner   | Encoding |      Collate       |       Ctype        |   Access privileges
+-----------+----------+----------+--------------------+--------------------+-----------------------
+ postgres  | postgres | UTF8     | English_India.1252 | English_India.1252 |
+ template0 | postgres | UTF8     | English_India.1252 | English_India.1252 | =c/postgres          +
+           |          |          |                    |                    | postgres=CTc/postgres
+ template1 | postgres | UTF8     | English_India.1252 | English_India.1252 | =c/postgres          +
+           |          |          |                    |                    | postgres=CTc/postgres
+(3 rows)
+
+
+postgres=# CREATE DATABASE test;
+CREATE DATABASE
+postgres=#
+postgres=# \l
+                                         List of databases
+   Name    |  Owner   | Encoding |      Collate       |       Ctype        |   Access privileges
+-----------+----------+----------+--------------------+--------------------+-----------------------
+ postgres  | postgres | UTF8     | English_India.1252 | English_India.1252 |
+ template0 | postgres | UTF8     | English_India.1252 | English_India.1252 | =c/postgres          +
+           |          |          |                    |                    | postgres=CTc/postgres
+ template1 | postgres | UTF8     | English_India.1252 | English_India.1252 | =c/postgres          +
+           |          |          |                    |                    | postgres=CTc/postgres
+ test      | postgres | UTF8     | English_India.1252 | English_India.1252 |
+(4 rows)
+
+
+postgres=# \c test
+You are now connected to database "test" as user "postgres".
+test=# \c postgres
+You are now connected to database "postgres" as user "postgres".
+postgres=# CREATE TABLE person {
+postgres-# \c test
+You are now connected to database "test" as user "postgres".
+test-# CREATE TABLE student (
+test(# id INT,
+test(# first_name VARCHAR(10)
+test(# last_name VARCHAR(20),
+test(# gender VARCHAR(7),
+test(# date_of_birth DATE);
+ERROR:  syntax error at or near "{"
+LINE 1: CREATE TABLE person {
+                            ^
+test=#  CREATE TABLE student {
+test-# id INT,
+test-# first_name VARCHAR(10),
+test-# last_name VARCHAR(20),
+test-# gender VARCHAR(7),
+test-# date_of_birth DATE };
+ERROR:  syntax error at or near "{"
+LINE 1: CREATE TABLE student {
+                             ^
+test=#  CREATE TABLE student(
+test(# id INT,
+test(# first_name VARCHAR(10),
+test(# last_name VARCHAR(20),
+test(# gender VARCHAR(7),
+test(# date_of_birth DATE);
+CREATE TABLE
+test=# \d
+          List of relations
+ Schema |  Name   | Type  |  Owner
+--------+---------+-------+----------
+ public | student | table | postgres
+(1 row)
+
+
+test=# \d student
+                         Table "public.student"
+    Column     |         Type          | Collation | Nullable | Default
+---------------+-----------------------+-----------+----------+---------
+ id            | integer               |           |          |
+ first_name    | character varying(10) |           |          |
+ last_name     | character varying(20) |           |          |
+ gender        | character varying(7)  |           |          |
+ date_of_birth | date                  |           |          |
+
+
+test=#
+test=# \c test;
+You are now connected to database "test" as user "postgres".
+test=# DROP TABLE student;
+DROP TABLE
+test=# \d
+Did not find any relations.
+test=# CREATE TABLE student(
+test(# id BIGSERIAL NOT NULL PRIMARY KEY,
+test(# first_name VARCHAR(50) NOT NULL,
+test(# last_name VARCHAR(20) NOT NULL,
+test(# gender VARCHAR(20) NOT NULL,
+test(# date_of_birth DATE NOT NULL,
+test(# email VARCHAR(50));
+CREATE TABLE
+test=# \d
+               List of relations
+ Schema |      Name      |   Type   |  Owner
+--------+----------------+----------+----------
+ public | student        | table    | postgres
+ public | student_id_seq | sequence | postgres
+(2 rows)
+
+
+test=# \d student
+                                       Table "public.student"
+    Column     |         Type          | Collation | Nullable |               Default
+---------------+-----------------------+-----------+----------+-------------------------------------
+ id            | bigint                |           | not null | nextval('student_id_seq'::regclass)
+ first_name    | character varying(50) |           | not null |
+ last_name     | character varying(20) |           | not null |
+ gender        | character varying(20) |           | not null |
+ date_of_birth | date                  |           | not null |
+ email         | character varying(50) |           |          |
+Indexes:
+    "student_pkey" PRIMARY KEY, btree (id)
+test=# INSERT INTO student(first_name,last_name,gender,date_of_birth)VALUES('yochi','honey','FEMALE','1998-10-15');
+INSERT 0 1test=# INSERT INTO student(first_name,last_name,gender,date_of_birth,email)VALUES('sudha','bujji','FEMALE','1998-08-07','sudha@gmail.com');
+INSERT 0 1
+test=# SELECT * from student;
+ id | first_name | last_name | gender | date_of_birth |      email    
+----+------------+-----------+--------+---------------+-----------------
+  1 | yochi      | honey     | FEMALE | 1998-10-15    |
+  2 | sudha      | bujji     | FEMALE | 1998-08-07    | sudha@gmail.com
+(2 rows)
+
+
+test=#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
